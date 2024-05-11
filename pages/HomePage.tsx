@@ -1,8 +1,11 @@
-import { Image, StyleSheet, Text, View,TouchableOpacity } from 'react-native'
+import { Image, StyleSheet, Text, View,TouchableOpacity, Button } from 'react-native'
 import React from 'react'
 import { StackNavigationProp } from '@react-navigation/stack';
-import LoginPage from './LoginPage';
+import LoginPage  from './LoginPage';
 import SignupPage from './SignupPage';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AuthStackParamList } from '../components/AppNavigator';
 
 
 type RootStackParamList = {
@@ -11,14 +14,18 @@ type RootStackParamList = {
     SignupPage: undefined;
 };
 
-type DetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'HomePage'>;
+//type DetailsScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Home'>;
 
-type Props = {
-    navigation: DetailsScreenNavigationProp;
-};
+// type Props = {
+//     navigation: DetailsScreenNavigationProp;
+// };
 
+const Stack = createNativeStackNavigator();
+type Props = {}
 
-const HomePage: React.FC<Props> = ( {navigation} ) => {
+const HomePage: React.FC<Props> = ( ) => {
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'HomePage'>>();
+
     return (
         
 
@@ -38,14 +45,12 @@ const HomePage: React.FC<Props> = ( {navigation} ) => {
                 <Text>
                     Already member?
            </Text>
-           <TouchableOpacity
-                                style={styles.addButton}
-                                
-                                onPress={() => navigation.navigate('LoginPage')}>
+        <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate('login')}>
 
-                                <Text>Log In</Text>  
-                                
-                            </TouchableOpacity>
+            <Text>LogIn</Text>
+        </TouchableOpacity>
                             <Text>
                     Not Member Yet ?
            </Text>
@@ -53,7 +58,7 @@ const HomePage: React.FC<Props> = ( {navigation} ) => {
                             <TouchableOpacity
                                 style={styles.addButton}
                                 
-                                onPress={() => navigation.navigate('SignupPage')}>
+                                onPress={() => navigation.navigate('signup')}>
 
                                 <Text>Register yourself </Text>  
                                 

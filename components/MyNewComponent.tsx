@@ -30,14 +30,13 @@ import {
 export type RootStackParamList = {
   EntryList: undefined;
   EntryEdit: { entryId: number };
-  LoinPage: undefined;
+  LoginPage: undefined;
   AuthSignup: undefined;
   AuthLogin: undefined;
 };
 
 import * as SecureStore from 'expo-secure-store';
 import AppNavigator from './AppNavigator';
-
 async function getValueFor(key:string) {
   let result = await SecureStore.getItemAsync(key);
  return result
@@ -62,14 +61,14 @@ const MyNewComponent =  () => {
   
     function StackNavigationEntry() {
       return (
-        
-        <Stack.Navigator initialRouteName="EntryList">
-          <Stack.Screen name="EntryList" component={EntryList} />
-         
-        </Stack.Navigator>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+       
         
       );
     }
+   
   return (
     
     <Tab.Navigator
@@ -77,14 +76,14 @@ const MyNewComponent =  () => {
       tabBarIcon: ({ focused, color, size }) => {
         let iconName: React.ComponentProps<typeof Ionicons>['name'];
 
-        if (route.name === 'Entries') {
-          iconName = focused ? 'cash' : 'cash-outline';
+        if (route.name === 'home') {
+          iconName = focused ? 'home' : 'home-outline';
         } else if (route.name === 'Categories') {
           iconName = focused ? 'settings' : 'settings-outline';
-        }  else if (route.name === 'Signin') {
+        }  else if (route.name === 'login') {
           iconName = focused ? 'log-in' : 'log-in-outline';
         } 
-        else if (route.name === 'Signup') {
+        else if (route.name === 'signup') {
           iconName = focused ? 'log-out' : 'log-out-outline';
         } 
         else {
@@ -105,9 +104,9 @@ const MyNewComponent =  () => {
     </>
   ) : (
     <>
-      <Tab.Screen name="Home" component={HomePage} />
-      <Tab.Screen name="Signin" component={LoginPage} />
-      <Tab.Screen name="Signup" component={SignupPage} />
+      <Tab.Screen name="home" component={HomePage} />
+      <Tab.Screen name="login" component={LoginPage} />
+      <Tab.Screen name="signup" component={SignupPage} />
     </>
   )}
       
