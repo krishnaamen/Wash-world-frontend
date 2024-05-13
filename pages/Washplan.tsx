@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View, TouchableOpacity, Button, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StackNavigationProp } from '@react-navigation/stack';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { clearToken } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
 import * as SecureStore from 'expo-secure-store';
+import { logout } from '../store/userSlice';
 
 
 type RootStackParamList = {
@@ -25,14 +26,23 @@ const Stack = createNativeStackNavigator();
 type Props = {}
 
 export const WashplanPage: React.FC<Props> = () => {
+    const token = SecureStore.getItemAsync('token');
     const dispatch = useDispatch();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'WashplanPage'>>();
     const username = "Krishnaamen";
+    useEffect(() => {
+        if (token === null) {
+            navigation.navigate('LoginPage');
+        }
+
+    }, [token]);
 
     const handleLogout = async() => {
         dispatch(clearToken());
+        dispatch(logout());
         SecureStore.deleteItemAsync('token');
         console.log("token deleted");
+       
     }
 
     return (
