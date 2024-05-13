@@ -37,87 +37,92 @@ export type RootStackParamList = {
 
 import * as SecureStore from 'expo-secure-store';
 import AppNavigator from './AppNavigator';
-async function getValueFor(key:string) {
+import WashplanPage from '../pages/Washplan';
+async function getValueFor(key: string) {
   let result = await SecureStore.getItemAsync(key);
- return result
+  return result
 }
 
 
 const queryClient = new QueryClient();
-const MyNewComponent =  () => {
-    const [token, setToken] = useState<string | null>(null);
-    
-    const rtoken = useSelector((state: RootState) => state.auth.token);
-    useEffect(() => {
-      getValueFor('token').then((value) => {
-        setToken(value);
-      });
-    }, [rtoken]);
+const MyNewComponent = () => {
+  const [token, setToken] = useState<string | null>(null);
 
-    console.log("token in choosing it from app",token); 
-    const Stack = createStackNavigator<RootStackParamList>();
-    const Tab = createBottomTabNavigator();
-   
-  
-    function StackNavigationEntry() {
-      return (
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
-       
-        
-      );
-    }
-   
+  const rtoken = useSelector((state: RootState) => state.auth.token);
+  useEffect(() => {
+    getValueFor('token').then((value) => {
+      setToken(value);
+    });
+  }, [rtoken]);
+
+  console.log("token in choosing it from app", token);
+  const Stack = createStackNavigator<RootStackParamList>();
+  const Tab = createBottomTabNavigator();
+
+
+  function StackNavigationEntry() {
+    return (
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+
+
+    );
+  }
+
   return (
-    
+
     <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName: React.ComponentProps<typeof Ionicons>['name'];
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: React.ComponentProps<typeof Ionicons>['name'];
 
-        if (route.name === 'home') {
-          iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === 'Categories') {
-          iconName = focused ? 'settings' : 'settings-outline';
-        }  else if (route.name === 'login') {
-          iconName = focused ? 'log-in' : 'log-in-outline';
-        } 
-        else if (route.name === 'signup') {
-          iconName = focused ? 'log-out' : 'log-out-outline';
-        } 
-        else {
-          iconName = 'alert'; // Default icon, make sure this is valid
-        }
+          if (route.name === 'home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Categories') {
+            iconName = focused ? 'settings' : 'settings-outline';
+          } else if (route.name === 'login') {
+            iconName = focused ? 'log-in' : 'log-in-outline';
+          }
+          else if (route.name === 'signup') {
+            iconName = focused ? 'log-out' : 'log-out-outline';
+          }
+          else if (route.name === 'washplan') {
+            iconName = focused ? 'car' : 'car-outline';
+          }
+          else {
+            iconName = 'alert'; // Default icon, make sure this is valid
+          }
 
-        // Now iconName is explicitly a valid icon key, no error should be thrown
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: 'tomato',
-      tabBarInactiveTintColor: 'gray',
-    })}>
+          // Now iconName is explicitly a valid icon key, no error should be thrown
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'tomato',
+        tabBarInactiveTintColor: 'gray',
+      })}>
 
-    { token ? (
-    <>
-     <Tab.Screen name="Entries" component={StackNavigationEntry} />
-    <Tab.Screen name="Categories" component={Categories} />
-    </>
-  ) : (
-    <>
-      <Tab.Screen name="home" component={HomePage} />
-      <Tab.Screen name="login" component={LoginPage} />
-      <Tab.Screen name="signup" component={SignupPage} />
-    </>
-  )}
-      
-  
+      {token ? (
+        <>
+          
+          <Tab.Screen name="washplan" component={WashplanPage} />
+        </>
+      ) : (
+        <>
+          <Tab.Screen name="home" component={HomePage} />
+          <Tab.Screen name="login" component={LoginPage} />
+          <Tab.Screen name="signup" component={SignupPage} />
+         
+        </>
+      )}
 
-    
-  </Tab.Navigator>
-  
-  
+
+
+
+    </Tab.Navigator>
+
+
   )
-  
+
 }
 
 export default MyNewComponent
