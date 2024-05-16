@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View, TouchableOpacity, Button, ScrollView } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StackNavigationProp } from '@react-navigation/stack';
-import LoginPage from './LoginPage';
+import LoginPage, { useGetCurrentUser } from './LoginPage';
 import SignupPage from './SignupPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -14,110 +14,144 @@ import * as SecureStore from 'expo-secure-store';
 import { logout } from '../store/userSlice';
 
 
+
+
 type RootStackParamList = {
     HomePage: undefined;
     LoginPage: undefined;
     SignupPage: undefined;
 };
 
- 
+
 
 const Stack = createNativeStackNavigator();
 type Props = {}
 
-export const WashplanPage: React.FC<Props> = () => {
+
+export const WashplanPage: React.FC<Props> =  () => {
+    const [currentPlan, setCurrentPlan] = useState<string | null>();
+    const username = SecureStore.getItemAsync('current_user');
+    const { isPending, isError, data, error }  = useGetCurrentUser() ;
+
     const token = SecureStore.getItemAsync('token');
+    
     const dispatch = useDispatch();
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'WashplanPage'>>();
-    const username = "Krishnaamen";
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'washplanpage'>>();
+    
     useEffect(() => {
         if (token === null) {
-            navigation.navigate('LoginPage');
+            navigation.navigate('LoginPage'); 
+
         }
+    }, []);
 
-    }, [token]);
-
-    const handleLogout = async() => {
+    const handleLogout = async () => {
         dispatch(clearToken());
+        //navigation.navigate('LoginPage'); 
         dispatch(logout());
-        SecureStore.deleteItemAsync('token');
+        await SecureStore.deleteItemAsync('token');
         console.log("token deleted");
-       
+    }
+
+    const handlePlan = async (plan: string) => {
+        await SecureStore.deleteItemAsync('plan');
+        await SecureStore.setItemAsync('plan', plan);
+        setCurrentPlan(plan);
+        console.log("plan selected clicking me", plan);
+    }
+
+    const changePlan = (planname ) => {
+        SecureStore.deleteItemAsync('plan');
+        setCurrentPlan(null);
+        console.log("plan deleted");
+    }
+
+    const planhandler = () => {
+        return (
+            <View style={styles.container}>
+        
+                <Image style={styles.wimage} source={require('../assets/w.png')} />
+                
+                <Text style={styles.title} >Choose your washing plan</Text>
+
+                <View style={styles.welcome}>
+                    <ScrollView style={styles.plan} horizontal={true}>
+                        <TouchableOpacity
+                            style={styles.addButton}
+                            onPress={() => handlePlan("basic")}>
+                            <PlanItem title='Basic' price={99} currency='DKK/M' offers={['shampoo', 'light dry', 'light brush']} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.addButton}
+
+                            onPress={() => handlePlan("basic")}>
+
+                            <PlanItem title='Gold' price={139} currency='DKK/M' offers={['shampoo', 'wash']} />
+
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.addButton}
+
+                            onPress={() => handlePlan("basic")}>
+
+                            <PlanItem title='Premium' price={169} currency='DKK/M' offers={['shampoo', 'wash']} />
+
+                        </TouchableOpacity>
+                    </ScrollView>
+
+                </View>
+
+
+
+
+            </View>
+
+
+
+
+        )
+
     }
 
     return (
 
-
-
-        <View style={styles.container}>
+        <>
             <View style={styles.nav}>
                 <Image style={styles.logo} source={require('../assets/logo.png')} />
 
-                <Text>{username}</Text>
+                <Text>{data}</Text>
+                
 
                 <View style={styles.title}>
                     <Text>Logout</Text>
                     <TouchableOpacity
-                                style={styles.addButton}
-                                onPress={()=>{
-                                    handleLogout()
-                                    //navigation.navigate('LoginPage')
-                                }}>
-                                <Ionicons name="log-out" size={50} color="red" />
-                            </TouchableOpacity>
+                        style={styles.addButton}
+                        onPress={() => {
+                            handleLogout()
+                            //navigation.navigate('LoginPage')
+                        }}>
+                        <Ionicons name="log-out" size={50} color="red" />
+                    </TouchableOpacity>
                 </View>
             </View>
-            
-
-            <Image style={styles.wimage} source={require('../assets/w.png')} />
-
-
-            
-
-
-
-            <Text style={styles.title} >Choose your washing plan</Text>
-
-            <View style={styles.welcome}>
-
-                <ScrollView style={styles.plan} horizontal={true}>
-
+            {currentPlan ? (
+                <>
+                    <Text style={styles.title}>Current Plan is</Text>
+                    <PlanItem title='Basic' price={99} currency='DKK/M' offers={['shampoo', 'light dry', 'light brush']} />
                     <TouchableOpacity
-                        style={styles.addButton}
-                        onPress={() => navigation.navigate('')}>
+                        style={styles.addButton1}
+                        onPress={() => {
+                            changePlan()
 
-                        <PlanItem title='Basic' price={99} currency='DKK/M' offers={['shampoo', 'light dry', 'light brush']} />
+                        }}>
+
+                        <Text style={styles.title}>Change Plan</Text>
                     </TouchableOpacity>
-
-
-                    <TouchableOpacity
-                        style={styles.addButton}
-
-                        onPress={() => navigation.navigate('')}>
-
-                        <PlanItem title='Gold' price={139} currency='DKK/M' offers={['shampoo', 'wash']} />
-
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.addButton}
-
-                        onPress={() => navigation.navigate('')}>
-
-                        <PlanItem title='Premium' price={169} currency='DKK/M' offers={['shampoo', 'wash']} />
-
-                    </TouchableOpacity>
-                </ScrollView>
-
-            </View>
-
-
-
-
-        </View>
-
-
-
-    )
+                </>
+            ) : planhandler()}
+        </>
+    );
 }
 
 export default WashplanPage;
@@ -163,11 +197,11 @@ const styles = StyleSheet.create({
         marginRight: 20,
     },
     addButton1: {
+        display: 'flex',
         backgroundColor: '#BBEDC3',
         padding: 10,
         margin: 10,
         borderRadius: 100,
-        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         width: '60%',
@@ -195,5 +229,8 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginRight: 20,
     },
+    icon: {
+        marginLeft: 30,
+    }
 
 })  

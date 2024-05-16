@@ -6,6 +6,7 @@ import SignupPage from './SignupPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from '../components/AppNavigator';
+import * as SecureStore from 'expo-secure-store';
 
 
 type RootStackParamList = {
@@ -25,6 +26,8 @@ type Props = {}
 
 const HomePage: React.FC<Props> = ( ) => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'HomePage'>>();
+    const token = SecureStore.getItemAsync('token');
+
 
     return (
         

@@ -11,6 +11,20 @@ import { Box, Button as bt, FormControl, Input, WarningOutlineIcon } from 'nativ
 import * as SecureStore from 'expo-secure-store';
 import { RootStackParamList } from '../components/MyNewComponent';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
+
+export const useGetCurrentUser = () => {
+  return useQuery({
+      queryKey: ['current_user'],
+      queryFn: async () => {
+          const response = await SecureStore.getItemAsync('current_user');
+          return response;
+          
+      },
+  })
+}
+
 
 
 
@@ -51,16 +65,21 @@ const LoginPage: React.FC<Props> = () => {
   const token = useSelector((state: RootState) => state.users.token);
 
   const handleLogin = async () => {
+
+
+
+    
     try {
-      console.log(email, password);
+      console.log("email and password",email, password);
       const { payload } = await dispatch(login({ email: email, password: password }))
+      console.log("payload in user login", payload);
       if (payload.access_token !== undefined) {
         save('token', payload.access_token);
-        save("current_user", JSON.stringify(payload.user));
         dispatch(setToken(payload.access_token));
         console.log("handle login access", payload.access_token);
 
       }
+      
 
     } catch (error) {
       console.error('Error logging in:', error);

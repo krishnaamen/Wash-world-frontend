@@ -16,6 +16,7 @@ import SignupPage from '../pages/SignupPage'
 import LoginPage from '../pages/LoginPage';
 import { useEffect, useState } from 'react';
 import HomePage from '../pages/HomePage';
+import { useGetCurrentUser } from '../pages/LoginPage';
 
 import {
   useQuery,
@@ -46,16 +47,13 @@ async function getValueFor(key: string) {
 
 const queryClient = new QueryClient();
 const MyNewComponent = () => {
-  const [token, setToken] = useState<string | null>(null);
+ 
+  const dispatch = useDispatch<AppDispatch>();
 
-  const rtoken = useSelector((state: RootState) => state.auth.token);
-  useEffect(() => {
-    getValueFor('token').then((value) => {
-      setToken(value);
-    });
-  }, [rtoken]);
+  const token = useSelector((state: RootState) => state.auth.token);
 
-  console.log("token in choosing it from app", token);
+  
+  
   const Stack = createStackNavigator<RootStackParamList>();
   const Tab = createBottomTabNavigator();
 
@@ -71,7 +69,7 @@ const MyNewComponent = () => {
   }
 
   return (
-
+<QueryClientProvider client={queryClient}>
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -120,7 +118,7 @@ const MyNewComponent = () => {
 
     </Tab.Navigator>
 
-
+    </QueryClientProvider>
   )
 
 }
