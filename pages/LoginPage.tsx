@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, AppState, Text } from 'react-native';
+import { View, TextInput, Button, StyleSheet, AppState, Text, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/userSlice';
 import { AppDispatch, RootState } from '../store/store';
@@ -16,12 +16,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 export const useGetCurrentUser = () => {
   return useQuery({
-      queryKey: ['current_user'],
-      queryFn: async () => {
-          const response = await SecureStore.getItemAsync('current_user');
-          return response;
-          
-      },
+    queryKey: ['current_user'],
+    queryFn: async () => {
+      const response = await SecureStore.getItemAsync('current_user');
+      return response;
+
+    },
   })
 }
 
@@ -68,18 +68,19 @@ const LoginPage: React.FC<Props> = () => {
 
 
 
-    
+
     try {
-      console.log("email and password",email, password);
+      console.log("email and password", email, password);
       const { payload } = await dispatch(login({ email: email, password: password }))
       console.log("payload in user login", payload);
       if (payload.access_token !== undefined) {
         save('token', payload.access_token);
         dispatch(setToken(payload.access_token));
         console.log("handle login access", payload.access_token);
+        save('current_user', payload.username);
 
       }
-      
+
 
     } catch (error) {
       console.error('Error logging in:', error);
@@ -106,7 +107,16 @@ const LoginPage: React.FC<Props> = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Login" onPress={handleLogin} />
+      <TouchableOpacity
+        style={styles.createButton}
+        onPress={handleLogin}>
+
+        <Text style={styles.buttonText}>Login</Text>
+
+      </TouchableOpacity>
+
+
+
     </View>
   );
 };
@@ -132,6 +142,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 10,
   },
+  input1: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  createButton: {
+    display: 'flex',
+    borderRadius: 10,
+    backgroundColor: "#2c6979",
+    margin: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '60%',
+  },
+  buttonText: {
+    padding: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'white',
+    fontSize: 20,
+
+  }
 
 })
 

@@ -17,6 +17,7 @@ import LoginPage from '../pages/LoginPage';
 import { useEffect, useState } from 'react';
 import HomePage from '../pages/HomePage';
 import { useGetCurrentUser } from '../pages/LoginPage';
+import AddCar from '../pages/AddCar';
 
 import {
   useQuery,
@@ -34,6 +35,8 @@ export type RootStackParamList = {
   LoginPage: undefined;
   AuthSignup: undefined;
   AuthLogin: undefined;
+  HomePage: undefined;
+  AddCar: undefined;
 };
 
 import * as SecureStore from 'expo-secure-store';
@@ -88,6 +91,9 @@ const MyNewComponent = () => {
           else if (route.name === 'washplan') {
             iconName = focused ? 'car' : 'car-outline';
           }
+          else if (route.name === 'addcar') {
+            iconName = focused ? 'add-circle' : 'add-circle-outline';
+          }
           else {
             iconName = 'alert'; // Default icon, make sure this is valid
           }
@@ -103,6 +109,7 @@ const MyNewComponent = () => {
         <>
           
           <Tab.Screen name="washplan" component={WashplanPage} />
+          <Tab.Screen name="addcar" component={AddCar} />
         </>
       ) : (
         <>

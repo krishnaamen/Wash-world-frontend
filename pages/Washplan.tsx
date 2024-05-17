@@ -32,6 +32,7 @@ export const WashplanPage: React.FC<Props> =  () => {
     const [currentPlan, setCurrentPlan] = useState<string | null>();
     const username = SecureStore.getItemAsync('current_user');
     const { isPending, isError, data, error }  = useGetCurrentUser() ;
+    console.log("current user", data);
 
     const token = SecureStore.getItemAsync('token');
     
