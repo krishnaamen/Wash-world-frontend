@@ -65,12 +65,9 @@ const LoginPage: React.FC<Props> = () => {
         console.log("handle login access", payload.access_token);
         save('current_user', payload.username);
       
-        const vehicle = await vehicleAPI.getVehicles(payload.access_token);
-        if(vehicle){
-          console.log("vehicles from login", vehicle);
-          await SecureStore.setItemAsync('current_vehicle', vehicle);
-      
-        }
+        const current_vehicle = await vehicleAPI.getVehicles(payload.access_token);
+        save('current_vehicle', current_vehicle);
+     
         
 
       }

@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { vehicleAPI } from "../api/vehicleAPI";
-import * as Securestorage from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store';
+import axios from 'axios';
+
 
 export const useGetCurrentVehicle = () => {
     return useQuery({
         queryKey: ['current_vehicle'],
-        queryFn: async () => {
-            const response:string|null = await Securestorage.getItemAsync('current_vehicle');
-            if (response) {
-                
-                return response;
-            } else {
-                return null;
-            }
+        queryFn: async function fetchVehicles () {
+            const token = await SecureStore.getItemAsync('token');
+            const response = await vehicleAPI.getVehicles(token as string);
+            return response;
         },
     })
 }
+
+

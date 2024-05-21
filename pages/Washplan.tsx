@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity, Button,FlatList, ScrollView } from 'react-native'
+import { Image, StyleSheet, Text, View, TouchableOpacity, Button, FlatList, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StackNavigationProp } from '@react-navigation/stack';
 import LoginPage from './LoginPage';
@@ -15,11 +15,13 @@ import { logout } from '../store/userSlice';
 import { useGetCurrentUser } from '../query/user.hooks';
 import { useGetCurrentVehicle } from '../query/vehicle.hooks';
 import { vehicleAPI } from '../api/vehicleAPI';
+import { useGetWashplanList } from '../query/washplan.hooks';
 
 
-
-
-
+const getcurrentvehicle = async () => {
+   return await SecureStore.getItemAsync('current_vehicle');
+   
+}
 
 
 type RootStackParamList = {
@@ -36,42 +38,52 @@ type Props = {}
 
 export const WashplanPage: React.FC<Props> =  () => {
     const [currentPlan, setCurrentPlan] = useState<string | null>();
+    const [currentVehicle, setCurrentVehicle] = useState<string | null>();
+
     const username = SecureStore.getItemAsync('current_user');
-    const { isPending, isError, data, error }  = useGetCurrentUser() ;
+    const { isPending, isError, data, error } = useGetCurrentUser();
+    const { isPending: isPending2, isError: isError2, data: washplanlist, error: error2 } = useGetWashplanList();
+    console.log("washplanlist", washplanlist);
+
 
     console.log("current user", data);
 
     const token = SecureStore.getItemAsync('token');
+    console.log("token", token);
+
     const { isPending: isPending1, isError: isError1, data: data1, error: error1 } = useGetCurrentVehicle();
-   
+    useEffect(() => {
     
-    console.log("current vehicle from wash", (data1));
+        if (data1) {
+            setCurrentVehicle(data1);
+        }   
+
+
+    }, [data1]);
+    
     const dispatch = useDispatch();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'washplanpage'>>();
-    
-    useEffect(() => {
-        if (token === null) {
-            navigation.navigate('LoginPage'); 
 
-        }
-    }, []);
+
 
     const handleLogout = async () => {
         dispatch(clearToken());
         //navigation.navigate('LoginPage'); 
         dispatch(logout());
         await SecureStore.deleteItemAsync('token');
+        await SecureStore.deleteItemAsync('current_user');
+        await SecureStore.deleteItemAsync('current_vehicle');
         console.log("token deleted");
     }
 
-    const handlePlan = async (plan: string) => {
-        await SecureStore.deleteItemAsync('plan');
-        await SecureStore.setItemAsync('plan', plan);
-        setCurrentPlan(plan);
-        console.log("plan selected clicking me", plan);
+    const handlePlan = async (id: number) => {
+        //await SecureStore.deleteItemAsync('plan');
+        //await SecureStore.setItemAsync('plan', plan);
+        //setCurrentPlan(plan);
+        //console.log("plan selected clicking me", plan);
     }
 
-    const changePlan = (planname ) => {
+    const changePlan = (planname) => {
         SecureStore.deleteItemAsync('plan');
         setCurrentPlan(null);
         console.log("plan deleted");
@@ -80,35 +92,32 @@ export const WashplanPage: React.FC<Props> =  () => {
     const planhandler = () => {
         return (
             <View style={styles.container}>
-        
+
                 <Image style={styles.wimage} source={require('../assets/w.png')} />
-                
+
                 <Text style={styles.title} >Choose your washing plan</Text>
 
                 <View style={styles.welcome}>
                     <ScrollView style={styles.plan} horizontal={true}>
-                        <TouchableOpacity
-                            style={styles.addButton}
-                            onPress={() => handlePlan("basic")}>
-                            <PlanItem title='Basic' price={99} currency='DKK/M' offers={['shampoo', 'light dry', 'light brush']} />
-                        </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.addButton}
+                        <FlatList
+                            horizontal={true}
+                            data={washplanlist}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={styles.addButton}
+                                    onPress={() => handlePlan(item.id)}>
+                                    <PlanItem title={item.washplanName} price={item.washPlanPrice} currency={"DKK"} offers={["shamphoo","polinig","dry"]} />
+                                </TouchableOpacity>
+                            )}
 
-                            onPress={() => handlePlan("basic")}>
 
-                            <PlanItem title='Gold' price={139} currency='DKK/M' offers={['shampoo', 'wash']} />
 
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.addButton}
 
-                            onPress={() => handlePlan("basic")}>
 
-                            <PlanItem title='Premium' price={169} currency='DKK/M' offers={['shampoo', 'wash']} />
-
-                        </TouchableOpacity>
+                        />
+                       
                     </ScrollView>
 
                 </View>
@@ -128,16 +137,16 @@ export const WashplanPage: React.FC<Props> =  () => {
     return (
 
         <>
-        
+
             <View style={styles.nav}>
                 <Image style={styles.logo} source={require('../assets/logo.png')} />
                 <View>
-                <Text >{data}</Text>
-                <Text style={styles.title}><Ionicons name="car" size={25} color="blue" />{data1}</Text>
-                
+                    <Text >{data}</Text>
+                    <Text style={styles.title}><Ionicons name="car" size={25} color="blue" />{currentVehicle}</Text>
+
                 </View>
-               
-                
+
+
 
                 <View style={styles.title}>
                     <Text>Logout</Text>
