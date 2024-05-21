@@ -1,7 +1,7 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity, Button, ScrollView } from 'react-native'
+import { Image, StyleSheet, Text, View, TouchableOpacity, Button,FlatList, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StackNavigationProp } from '@react-navigation/stack';
-import LoginPage, { useGetCurrentUser } from './LoginPage';
+import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -12,6 +12,12 @@ import { clearToken } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
 import * as SecureStore from 'expo-secure-store';
 import { logout } from '../store/userSlice';
+import { useGetCurrentUser } from '../query/user.hooks';
+import { useGetCurrentVehicle } from '../query/vehicle.hooks';
+import { vehicleAPI } from '../api/vehicleAPI';
+
+
+
 
 
 
@@ -32,10 +38,14 @@ export const WashplanPage: React.FC<Props> =  () => {
     const [currentPlan, setCurrentPlan] = useState<string | null>();
     const username = SecureStore.getItemAsync('current_user');
     const { isPending, isError, data, error }  = useGetCurrentUser() ;
+
     console.log("current user", data);
 
     const token = SecureStore.getItemAsync('token');
+    const { isPending: isPending1, isError: isError1, data: data1, error: error1 } = useGetCurrentVehicle();
+   
     
+    console.log("current vehicle from wash", (data1));
     const dispatch = useDispatch();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'washplanpage'>>();
     
@@ -118,10 +128,15 @@ export const WashplanPage: React.FC<Props> =  () => {
     return (
 
         <>
+        
             <View style={styles.nav}>
                 <Image style={styles.logo} source={require('../assets/logo.png')} />
-
-                <Text>{data}</Text>
+                <View>
+                <Text >{data}</Text>
+                <Text style={styles.title}><Ionicons name="car" size={25} color="blue" />{data1}</Text>
+                
+                </View>
+               
                 
 
                 <View style={styles.title}>

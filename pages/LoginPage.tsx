@@ -12,21 +12,7 @@ import * as SecureStore from 'expo-secure-store';
 import { RootStackParamList } from '../components/MyNewComponent';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-
-
-export const useGetCurrentUser = () => {
-  return useQuery({
-    queryKey: ['current_user'],
-    queryFn: async () => {
-      const response = await SecureStore.getItemAsync('current_user');
-      return response;
-
-    },
-  })
-}
-
-
-
+import { vehicleAPI } from '../api/vehicleAPI';
 
 export const storeData = async (key: string, value: string) => {
   try {
@@ -65,8 +51,8 @@ const LoginPage: React.FC<Props> = () => {
   const token = useSelector((state: RootState) => state.users.token);
 
   const handleLogin = async () => {
-
-
+    const jwt = await SecureStore.getItemAsync('token') as string;
+    //Nk.Leader@2024
 
 
     try {
@@ -78,6 +64,14 @@ const LoginPage: React.FC<Props> = () => {
         dispatch(setToken(payload.access_token));
         console.log("handle login access", payload.access_token);
         save('current_user', payload.username);
+      
+        const vehicle = await vehicleAPI.getVehicles(payload.access_token);
+        if(vehicle){
+          console.log("vehicles from login", vehicle);
+          await SecureStore.setItemAsync('current_vehicle', vehicle);
+      
+        }
+        
 
       }
 
