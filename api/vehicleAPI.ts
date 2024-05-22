@@ -27,7 +27,7 @@ export class vehicleAPI {
             );
             console.log("response from create vehicle", response.data);
             return response.data;
-            
+
 
 
         } catch (error) {
@@ -40,49 +40,50 @@ export class vehicleAPI {
 
 
     static async getVehicles(jwt: string) {
-  
-            const response = await axios.get(this.baseUrl,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${jwt}`,
-                    }
-                })
-                console.log(" vehicle list from api",response.data)
-                if(response.data){
-                    await SecureStore.setItemAsync('vehicles', JSON.stringify(response.data));
-                    console.log("response from get vehicles", response.data[0].licencePlateNumber);
-                    await SecureStore.setItemAsync('current_vehicle', response.data[0].licencePlateNumber);
-                return response.data[0].licencePlateNumber;
+
+        const response = await axios.get(this.baseUrl,
+            {
+                headers: {
+                    'Authorization': `Bearer ${jwt}`,
                 }
-             
-            }
-
-
-        static async updateVehicleWithPlan(jwt: string, createVehicleDto: CreateVehicleDto) {
-            try {
-                
-                
-                const response = await axios.patch(this.baseUrl, createVehicleDto,
-                    {
-                        headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${jwt}`,
-                        },
-                    }
-                );
-                console.log("response from create vehicle", response.data);
-                return response.data;
-                
-    
-    
-            } catch (error) {
-                console.log("error from create vehicle", error);
-            }
-
+            })
+        console.log(" vehicle list from api", response.data)
+        if (response.data) {
+            await SecureStore.setItemAsync('vehicles', JSON.stringify(response.data));
+            console.log("response from get vehicles", response.data[0].licencePlateNumber);
+            await SecureStore.setItemAsync('current_vehicle', response.data[0].licencePlateNumber);
+            //return response.data[0].licencePlateNumber;
+            return response.data[0];
         }
-            
-         
-    
+
+    }
+
+
+    static async updateVehicleWithPlan(jwt: string, id: number, createVehicleDto: CreateVehicleDto) {
+        try {
+
+            console.log("dto from update vehicle", createVehicleDto);
+
+            const response = await axios.patch(this.baseUrl+`/${id}`, createVehicleDto, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${jwt}`,
+                },
+            });
+
+            console.log("response from create vehicle", response.data);
+            return response.data;
+
+
+
+        } catch (error) {
+            console.log("error from create vehicle", error);
+        }
+
+    }
+
+
+
 
 }

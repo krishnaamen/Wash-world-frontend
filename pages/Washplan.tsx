@@ -9,20 +9,29 @@ import { AuthStackParamList } from '../components/AppNavigator';
 import PlanItem from '../components/PlanItem';
 import { Ionicons } from '@expo/vector-icons';
 import { clearToken } from '../store/authSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as SecureStore from 'expo-secure-store';
 import { logout } from '../store/userSlice';
 import { useGetCurrentUser } from '../query/user.hooks';
 import { useGetCurrentVehicle } from '../query/vehicle.hooks';
 import { vehicleAPI } from '../api/vehicleAPI';
 import { useGetWashplanList } from '../query/washplan.hooks';
+import { RootState } from '../store/store';
 
 
 const getcurrentvehicle = async () => {
-   return await SecureStore.getItemAsync('current_vehicle');
-   
+    return await SecureStore.getItemAsync('current_vehicle');
+
 }
 
+type Vehicle = {
+    id: number,
+    licencePlateNumber: string,
+    model: string,
+    color: string,
+    year: string
+
+}
 
 type RootStackParamList = {
     HomePage: undefined;
@@ -36,9 +45,9 @@ const Stack = createNativeStackNavigator();
 type Props = {}
 
 
-export const WashplanPage: React.FC<Props> =  () => {
+export const WashplanPage: React.FC<Props> = () => {
     const [currentPlan, setCurrentPlan] = useState<string | null>();
-    const [currentVehicle, setCurrentVehicle] = useState<string | null>();
+    const [currentVehicle, setCurrentVehicle] = useState<Vehicle | null>();
 
     const username = SecureStore.getItemAsync('current_user');
     const { isPending, isError, data, error } = useGetCurrentUser();
@@ -48,23 +57,24 @@ export const WashplanPage: React.FC<Props> =  () => {
 
     console.log("current user", data);
 
-    const token = SecureStore.getItemAsync('token');
+    const token = useSelector((state: RootState) => state.auth.token);
     console.log("token", token);
 
     const { isPending: isPending1, isError: isError1, data: data1, error: error1 } = useGetCurrentVehicle();
+    console.log("current vehicle", data1);
     useEffect(() => {
-    
+
         if (data1) {
             setCurrentVehicle(data1);
-        }   
+        }
 
 
     }, [data1]);
-    
+
     const dispatch = useDispatch();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'washplanpage'>>();
 
-
+    console.log("current vehicle from wahsh", currentVehicle);
 
     const handleLogout = async () => {
         dispatch(clearToken());
@@ -76,7 +86,26 @@ export const WashplanPage: React.FC<Props> =  () => {
         console.log("token deleted");
     }
 
-    const handlePlan = async (id: number) => {
+    const handlePlan = (id: number,token:string) => {
+
+        const plan = washplanlist.find((plan: any) => plan.id === id);
+        console.log("**********");
+        console.log("plan selected", plan);
+        console.log("token", token);
+        console.log("current vehicle", currentVehicle);
+        console.log("**********");
+        const currentVehicleDto = {
+
+            id: currentVehicle?.id!,
+            licencePlateNumber: currentVehicle?.licencePlateNumber!,
+            model: currentVehicle?.model!,
+            color: currentVehicle?.color!,
+            year: currentVehicle?.year!,
+            washplan: id!
+        }
+        vehicleAPI.updateVehicleWithPlan(token, currentVehicle?.id!,currentVehicleDto!);
+        
+
         //await SecureStore.deleteItemAsync('plan');
         //await SecureStore.setItemAsync('plan', plan);
         //setCurrentPlan(plan);
@@ -107,8 +136,8 @@ export const WashplanPage: React.FC<Props> =  () => {
                             renderItem={({ item }) => (
                                 <TouchableOpacity
                                     style={styles.addButton}
-                                    onPress={() => handlePlan(item.id)}>
-                                    <PlanItem title={item.washplanName} price={item.washPlanPrice} currency={"DKK"} offers={["shamphoo","polinig","dry"]} />
+                                    onPress={() => handlePlan(item.id,token as string)}>
+                                    <PlanItem title={item.washplanName} price={item.washPlanPrice} currency={"DKK"} offers={["shamphoo", "polinig", "dry"]} />
                                 </TouchableOpacity>
                             )}
 
@@ -117,7 +146,7 @@ export const WashplanPage: React.FC<Props> =  () => {
 
 
                         />
-                       
+
                     </ScrollView>
 
                 </View>
@@ -142,7 +171,7 @@ export const WashplanPage: React.FC<Props> =  () => {
                 <Image style={styles.logo} source={require('../assets/logo.png')} />
                 <View>
                     <Text >{data}</Text>
-                    <Text style={styles.title}><Ionicons name="car" size={25} color="blue" />{currentVehicle}</Text>
+                    <Text style={styles.title}><Ionicons name="car" size={25} color="blue" />{currentVehicle?.licencePlateNumber}</Text>
 
                 </View>
 

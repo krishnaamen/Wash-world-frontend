@@ -10,6 +10,7 @@ export const useGetCurrentVehicle = () => {
         queryFn: async function fetchVehicles () {
             const token = await SecureStore.getItemAsync('token');
             const response = await vehicleAPI.getVehicles(token as string);
+            console.log("response from get current vehicle from query:", response);
             return response;
         },
     })
