@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as SecureStore from 'expo-secure-store';
 import { logout } from '../store/userSlice';
 import { useGetCurrentUser } from '../query/user.hooks';
-import { useGetCurrentVehicle } from '../query/vehicle.hooks';
+import { useGetCurrentPlan, useGetCurrentVehicle } from '../query/vehicle.hooks';
 import { vehicleAPI } from '../api/vehicleAPI';
 import { useGetWashplanList } from '../query/washplan.hooks';
 import { RootState } from '../store/store';
@@ -22,6 +22,12 @@ import { RootState } from '../store/store';
 const getcurrentvehicle = async () => {
     return await SecureStore.getItemAsync('current_vehicle');
 
+}
+type WashPlan = {
+    id: number,
+    washplanName: string,
+    washPlanPrice: number,
+    washPlanOffers: string[]
 }
 
 type Vehicle = {
@@ -46,26 +52,27 @@ type Props = {}
 
 
 export const WashplanPage: React.FC<Props> = () => {
-    const [currentPlan, setCurrentPlan] = useState<string | null>();
+    const [currentPlan, setCurrentPlan] = useState<WashPlan | undefined>();
     const [currentVehicle, setCurrentVehicle] = useState<Vehicle | null>();
-
     const username = SecureStore.getItemAsync('current_user');
     const { isPending, isError, data, error } = useGetCurrentUser();
-    const { isPending: isPending2, isError: isError2, data: washplanlist, error: error2 } = useGetWashplanList();
-    console.log("washplanlist", washplanlist);
-
-
-    console.log("current user", data);
-
     const token = useSelector((state: RootState) => state.auth.token);
-    console.log("token", token);
-
+    const { isPending: isPending2, isError: isError2, data: washplanlist, error: error2 } = useGetWashplanList();
     const { isPending: isPending1, isError: isError1, data: data1, error: error1 } = useGetCurrentVehicle();
-    console.log("current vehicle", data1);
+    const { isPending: isPending3, isError: isError3, data: data3, error: error3 } = useGetCurrentPlan(currentVehicle?.id!);
+
+
     useEffect(() => {
 
         if (data1) {
             setCurrentVehicle(data1);
+
+
+        }
+        if(data3){
+            console.log("current plan from washplan",data3);
+            
+            setCurrentPlan(data3);
         }
 
 
@@ -73,12 +80,16 @@ export const WashplanPage: React.FC<Props> = () => {
 
     const dispatch = useDispatch();
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'washplanpage'>>();
+    console.log("**********------------------");
 
-    console.log("current vehicle from wahsh", currentVehicle);
+    console.log("current plan", currentPlan);
+    //console.log("current vehicle from wahsh", currentVehicle);
+    //console.log("Data 1     ", data1);
+    console.log("**********------------------");
 
     const handleLogout = async () => {
         dispatch(clearToken());
-        //navigation.navigate('LoginPage'); 
+        //navigation.navigate('LoginPage');
         dispatch(logout());
         await SecureStore.deleteItemAsync('token');
         await SecureStore.deleteItemAsync('current_user');
@@ -104,7 +115,7 @@ export const WashplanPage: React.FC<Props> = () => {
             washplan: id!
         }
         vehicleAPI.updateVehicleWithPlan(token, currentVehicle?.id!,currentVehicleDto!);
-        
+
 
         //await SecureStore.deleteItemAsync('plan');
         //await SecureStore.setItemAsync('plan', plan);
@@ -112,10 +123,50 @@ export const WashplanPage: React.FC<Props> = () => {
         //console.log("plan selected clicking me", plan);
     }
 
-    const changePlan = (planname) => {
+    const resetPlan = (id: number,token:string) => {
+
+        //const plan = washplanlist.find((plan: WashPlan) => plan.id === id);
+        console.log("**********");
+        //console.log("plan selected", plan);
+        console.log("token", token);
+        console.log("current vehicle", currentVehicle);
+        console.log("**********");
+        const currentVehicleDto = {
+            id: currentVehicle?.id,
+            licencePlateNumber: currentVehicle?.licencePlateNumber!,
+            model: currentVehicle?.model!,
+            color: currentVehicle?.color!,
+            year: currentVehicle?.year!,
+            washplan: null
+     // Replace null with a default value or the appropriate number value
+        }
+        vehicleAPI.resetVehicleWithPlan(token, currentVehicle?.id!, currentVehicleDto!);
+
+
+        //await SecureStore.deleteItemAsync('plan');
+        //await SecureStore.setItemAsync('plan', plan);
+        //setCurrentPlan(plan);
+        //console.log("plan selected clicking me", plan);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    const changePlan = (currentPlan:WashPlan) => {
+        const id = currentPlan.id;
         SecureStore.deleteItemAsync('plan');
-        setCurrentPlan(null);
+        setCurrentPlan(undefined);
+        SecureStore.deleteItemAsync('current_plan');
         console.log("plan deleted");
+        
     }
 
     const planhandler = () => {
@@ -156,9 +207,6 @@ export const WashplanPage: React.FC<Props> = () => {
 
             </View>
 
-
-
-
         )
 
     }
@@ -192,11 +240,11 @@ export const WashplanPage: React.FC<Props> = () => {
             {currentPlan ? (
                 <>
                     <Text style={styles.title}>Current Plan is</Text>
-                    <PlanItem title='Basic' price={99} currency='DKK/M' offers={['shampoo', 'light dry', 'light brush']} />
+                    <PlanItem title={currentPlan.washplanName} price={currentPlan.washplanPrice} currency='DKK/M' offers={['shampoo', 'light dry', 'light brush']} />
                     <TouchableOpacity
                         style={styles.addButton1}
                         onPress={() => {
-                            changePlan()
+                            resetPlan(currentPlan.id!  ,token as string);
 
                         }}>
 
@@ -287,4 +335,4 @@ const styles = StyleSheet.create({
         marginLeft: 30,
     }
 
-})  
+})
