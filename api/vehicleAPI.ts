@@ -97,7 +97,7 @@ export class vehicleAPI {
                 },
             });
 
-            console.log("response from create vehicle", response.data);
+            console.log("response from reset  vehicle", response.data);
             return response.data;
         } catch (error) {
             console.log("error from create vehicle", error);
@@ -118,7 +118,7 @@ export class vehicleAPI {
                 },
             });
 
-            console.log("response from get plan", response.data);
+            console.log("response from get current plan from api call from vehicle", response.data);
             return response.data;
 
 

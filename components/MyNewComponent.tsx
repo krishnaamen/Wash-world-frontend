@@ -1,23 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
-import EntryList from '../pages/EntryList';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Profile from '../pages/Profile';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppDispatch, RootState, store } from '../store/store'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { Categories } from '../pages/Categories';
 import SignupPage from '../pages/SignupPage'
 import LoginPage from '../pages/LoginPage';
-import { useEffect, useState } from 'react';
 import HomePage from '../pages/HomePage';
-import { useGetCurrentUser } from '../pages/LoginPage';
 import AddCar from '../pages/AddCar';
+import WashplanPage from '../pages/Washplan';
 
 import {
   useQuery,
@@ -30,8 +23,7 @@ import {
 
 
 export type RootStackParamList = {
-  EntryList: undefined;
-  EntryEdit: { entryId: number };
+  WashplanPage: undefined;
   LoginPage: undefined;
   AuthSignup: undefined;
   AuthLogin: undefined;
@@ -41,7 +33,6 @@ export type RootStackParamList = {
 
 import * as SecureStore from 'expo-secure-store';
 import AppNavigator from './AppNavigator';
-import WashplanPage from '../pages/Washplan';
 async function getValueFor(key: string) {
   let result = await SecureStore.getItemAsync(key);
   return result
@@ -49,11 +40,12 @@ async function getValueFor(key: string) {
 
 
 const queryClient = new QueryClient();
-const MyNewComponent = () => {
+const MyNewComponent =   () => {
  
   const dispatch = useDispatch<AppDispatch>();
 
   const token = useSelector((state: RootState) => state.auth.token);
+  //const token = getValueFor('token');
 
   
   

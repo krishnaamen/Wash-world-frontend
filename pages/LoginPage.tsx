@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, AppState, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, Button as bt, StyleSheet, AppState, Text, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/userSlice';
 import { AppDispatch, RootState } from '../store/store';
@@ -7,7 +7,7 @@ import { setToken } from '../store/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Box, Button as bt, FormControl, Input, WarningOutlineIcon } from 'native-base';
+import { Box, Button , FormControl, Input, WarningOutlineIcon, Stack as Stack1 } from 'native-base';
 import * as SecureStore from 'expo-secure-store';
 import { RootStackParamList } from '../components/MyNewComponent';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -56,6 +56,7 @@ const LoginPage: React.FC<Props> = () => {
 
 
     try {
+
       console.log("email and password", email, password);
       const { payload } = await dispatch(login({ email: email, password: password }))
       console.log("payload in user login", payload);
@@ -66,7 +67,7 @@ const LoginPage: React.FC<Props> = () => {
         save('current_user', payload.username);
       
         const current_vehicle = await vehicleAPI.getVehicles(payload.access_token);
-        save('current_vehicle', current_vehicle);
+        save('current_vehicle', JSON.stringify(current_vehicle));
      
         
 
@@ -81,34 +82,57 @@ const LoginPage: React.FC<Props> = () => {
   };
 
   return (
-    <View style={styles.container}>
-
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        autoCapitalize="none"
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TouchableOpacity
-        style={styles.createButton}
-        onPress={handleLogin}>
-
-        <Text style={styles.buttonText}>Login</Text>
-
-      </TouchableOpacity>
+  <View >
 
 
+    <Box alignItems="center" pt="40">
+    <Box w="100%" maxWidth="300px">
+        <FormControl isRequired>
+            <Stack1 mx="4">
+                <FormControl.Label>Email</FormControl.Label>
+                <Input type="text" placeholder="Email" value={email} 
+                    autoCapitalize="none" onChangeText={setEmail}/>
+            </Stack1>
+        </FormControl>
+    </Box>
 
-    </View>
+    <Box w="100%" maxWidth="300px">
+        <FormControl isRequired>
+            <Stack1 mx="4">
+                <FormControl.Label >Password</FormControl.Label>
+                <Input type="password" defaultValue="12345" placeholder="Password" 
+                    value={password} onChangeText={setPassword}/>
+                <FormControl.HelperText >
+                  <Text>Must be atleast 6 characters.</Text>
+                    
+                </FormControl.HelperText>
+            </Stack1>
+        </FormControl>
+    </Box>
+</Box>
+
+<Box alignItems="center" >
+  <Button mt="10" onPress={handleLogin} >
+  <Text style={styles.buttonText}>Login</Text>
+  </Button>
+  
+  
+  
+</Box>
+
+
+
+
+
+</View>
+
+
+
+
+
+
+
+   
   );
 };
 
@@ -149,7 +173,7 @@ const styles = StyleSheet.create({
     width: '60%',
   },
   buttonText: {
-    padding: 10,
+    padding: 1,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -161,3 +185,31 @@ const styles = StyleSheet.create({
 })
 
 export default LoginPage;
+
+
+
+
+
+{
+  /* <View style={styles.container}>
+      <Text style={styles.title}>Login</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={setUsername}
+        value={username}
+        placeholder="Username"
+      />
+      <TextInput
+        style={styles.input}
+        onChangeText={setPassword}
+        value={password}
+        placeholder="Password"
+        secureTextEntry
+      />
+      <Button title="Login" onPress={handleLogin} />
+      <Button
+        title="Don't have an account? Sign up"
+        onPress={() => navigation.navigate('Signup')}
+      />
+    </View> */    
+}

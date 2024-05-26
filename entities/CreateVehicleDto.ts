@@ -4,7 +4,7 @@ export class CreateVehicleDto {
   model: string;
   color: string;
   year: string;
-  washplan: number;
+  washplan: any;
   
 
   constructor(
@@ -12,7 +12,7 @@ export class CreateVehicleDto {
     model: string,
     color: string,
     year: string,
-    washplan: number
+    washplan: any,
     
   ) {
     this.licencePlateNumber = licencePlateNumber;

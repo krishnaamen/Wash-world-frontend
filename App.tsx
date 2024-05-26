@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
-import EntryList from './pages/EntryList';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,7 +9,6 @@ import Profile from './pages/Profile';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppDispatch, RootState, store } from './store/store'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import { Categories } from './pages/Categories';
 import SignupPage from './pages/SignupPage'
 import  LoginPage from './pages/LoginPage'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,6 +16,8 @@ import { useEffect, useState } from 'react';
 import MyNewComponent from './components/MyNewComponent';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 const queryClient = new QueryClient()
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { Box, NativeBaseProvider } from "native-base";
 
 
 
@@ -30,10 +30,11 @@ export default function App() {
     <Provider store = {store}>
       <QueryClientProvider client={queryClient}>
     <NavigationContainer>
+    <NativeBaseProvider>
       <MyNewComponent />
      
 
-  
+    </NativeBaseProvider>
     </NavigationContainer>
     </QueryClientProvider>
     </Provider>
