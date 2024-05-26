@@ -8,11 +8,14 @@ import { signup } from '../store/userSlice';
 import * as SecureStore from 'expo-secure-store';
 import Moment from 'react-moment';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 type Props = NativeStackScreenProps<RootStackParamList>
 
-const SignupScreen = (props: Props) => {
+const SignupScreen = () => {
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'signup'>>();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -91,7 +94,7 @@ const dispatch = useDispatch<AppDispatch>();
 <View style={styles.button}>
             <Button title="Sign Up" onPress={handleSignup} />
             </View>
-            <Text style={styles.loginText} onPress={() => props.navigation.navigate("AuthLogin")}>Go to Login</Text>
+            <Text style={styles.loginText} onPress={() => navigation.navigate("login")}>Go to Login</Text>
         </View>
     );
 };

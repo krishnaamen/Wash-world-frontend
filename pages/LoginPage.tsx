@@ -7,7 +7,7 @@ import { setToken } from '../store/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Box, Button , FormControl, Input, WarningOutlineIcon, Stack as Stack1 } from 'native-base';
+import { Box, Button , Link, FormControl, Input, WarningOutlineIcon, Stack as Stack1 } from 'native-base';
 import * as SecureStore from 'expo-secure-store';
 import { RootStackParamList } from '../components/MyNewComponent';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -119,6 +119,11 @@ const LoginPage: React.FC<Props> = () => {
   
   
 </Box>
+<Box alignItems="center" >
+  
+  <Text style= {styles.link} onPress={() => navigation.navigate('signup')} >Don't have an account? Sign up</Text>
+  
+</Box>
 
 
 
@@ -180,7 +185,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
 
-  }
+  },
+  link: {
+    marginTop: 20,
+    color: 'blue',
+    fontSize: 16,
+  },
 
 })
 
