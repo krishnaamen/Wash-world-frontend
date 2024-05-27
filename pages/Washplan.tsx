@@ -82,6 +82,7 @@ export const WashplanPage: React.FC<Props> = () => {
     const mutation = useUpdateCurrentWashplan()
 
     useEffect(() => {
+
         if (data1) {
             console.log("current vehicle from washplan", data1);
             setCurrentVehicle(data1);
@@ -96,6 +97,20 @@ export const WashplanPage: React.FC<Props> = () => {
             setCurrentPlan(null);
         }
         
+        async function readVehicleFromSecureStore() {
+            const vehicle = await SecureStore.getItemAsync('current_vehicle');
+            vehicle && setCurrentVehicle(JSON.parse(vehicle));
+        }
+        readVehicleFromSecureStore();
+
+        async function readCurrentPlanFromSecureStore() {
+            const currentPlan = await SecureStore.getItemAsync('current_plan');
+                currentPlan && setCurrentPlan(JSON.parse(currentPlan));
+        }
+        readCurrentPlanFromSecureStore();
+
+
+
 
 
     }, [data1, data3]);

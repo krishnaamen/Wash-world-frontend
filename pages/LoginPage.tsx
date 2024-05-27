@@ -57,7 +57,7 @@ const LoginPage: React.FC<Props> = () => {
 
     try {
 
-      console.log("email and password", email, password);
+      console.log("email and password ", email, password);
       const { payload } = await dispatch(login({ email: email, password: password }))
       console.log("payload in user login", payload);
       if (payload.access_token !== undefined) {
@@ -68,7 +68,6 @@ const LoginPage: React.FC<Props> = () => {
       
         const current_vehicle = await vehicleAPI.getVehicles(payload.access_token);
         save('current_vehicle', JSON.stringify(current_vehicle));
-        
      
         
 
