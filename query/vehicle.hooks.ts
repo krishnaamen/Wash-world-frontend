@@ -13,11 +13,14 @@ import {
   import { VehicleDTO } from "../pages/Washplan";
 
 
-
+  async function save(key: string, value: string) {
+    await SecureStore.setItemAsync(key, value);
+  }
 
    
 
     export const useGetCurrentVehicle = () => {
+        
     return useQuery({
         queryKey: ['current_vehicle'],
         queryFn: async function fetchVehicles () {
@@ -36,8 +39,10 @@ import {
             const token = await SecureStore.getItemAsync('token');
             const currentVehicle = await SecureStore.getItemAsync('current_vehicle');
             const response = await vehicleAPI.getCurrentPlan(token as string,id );
+
             console.log("response from get current plan from query:", response);
             if(response){
+                
                 return response;
 
             }

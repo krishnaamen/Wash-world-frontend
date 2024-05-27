@@ -11,6 +11,8 @@ import LoginPage from '../pages/LoginPage';
 import HomePage from '../pages/HomePage';
 import AddCar from '../pages/AddCar';
 import WashplanPage from '../pages/Washplan';
+import { useEffect } from 'react';
+import { setToken } from '../store/authSlice';
 
 import {
   useQuery,
@@ -41,6 +43,14 @@ async function getValueFor(key: string) {
 
 const queryClient = new QueryClient();
 const MyNewComponent =   () => {
+
+  useEffect(() => {
+    async function readTokenFromSecureStore() {
+        const token = await SecureStore.getItemAsync('token');
+        token && dispatch(setToken(token))
+    }
+    readTokenFromSecureStore();
+}, [])
  
   const dispatch = useDispatch<AppDispatch>();
 

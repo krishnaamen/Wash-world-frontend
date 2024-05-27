@@ -68,6 +68,7 @@ const LoginPage: React.FC<Props> = () => {
       
         const current_vehicle = await vehicleAPI.getVehicles(payload.access_token);
         save('current_vehicle', JSON.stringify(current_vehicle));
+        
      
         
 
@@ -84,8 +85,8 @@ const LoginPage: React.FC<Props> = () => {
   return (
   <View >
 
-
-    <Box alignItems="center" pt="40">
+{/* //native base ui library */}
+    <Box alignItems="center" pt="30">
     <Box w="100%" maxWidth="300px">
         <FormControl isRequired>
             <Stack1 mx="4">
@@ -112,7 +113,7 @@ const LoginPage: React.FC<Props> = () => {
 </Box>
 
 <Box alignItems="center" >
-  <Button mt="10" onPress={handleLogin} >
+  <Button mt="10" onPress={handleLogin} testID='loginButton' >
   <Text style={styles.buttonText}>Login</Text>
   </Button>
   

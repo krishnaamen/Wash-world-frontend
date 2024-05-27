@@ -13,17 +13,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as SecureStore from 'expo-secure-store';
 import { logout } from '../store/userSlice';
 import { useGetCurrentUser } from '../query/user.hooks';
-import { useGetCurrentPlan,useGetCurrentVehicle,useUpdateCurrentWashplan,useResetCurrentWashplan} from '../query/vehicle.hooks';
+import { useGetCurrentPlan, useGetCurrentVehicle, useUpdateCurrentWashplan, useResetCurrentWashplan } from '../query/vehicle.hooks';
 import { vehicleAPI } from '../api/vehicleAPI';
 import { useGetWashplanList } from '../query/washplan.hooks';
 import { RootState } from '../store/store';
-import  Toast  from 'react-native-root-toast';
-import { Mutation } from '@tanstack/react-query';
+import Toast from 'react-native-root-toast';
+import { Mutation, useQueryClient } from '@tanstack/react-query';
+
 
 const getcurrentvehicle = async () => {
     return await SecureStore.getItemAsync('current_vehicle');
 
 }
+
 export type WashPlan = {
     id: number,
     washplanName: string,
@@ -51,14 +53,12 @@ type RootStackParamList = {
 
 
 
+
 const Stack = createNativeStackNavigator();
 type Props = {}
 
 
 export const WashplanPage: React.FC<Props> = () => {
-
-    
-
     const [currentPlan, setCurrentPlan] = useState<WashPlan | any>();
     const [currentVehicle, setCurrentVehicle] = useState<VehicleDTO | any>();
     const username = SecureStore.getItemAsync('current_user');
@@ -66,15 +66,17 @@ export const WashplanPage: React.FC<Props> = () => {
     const token = useSelector((state: RootState) => state.auth.token);
     const { isPending: isPending2, isError: isError2, data: data2, error: error2 } = useGetWashplanList();
     const { isPending: isPending1, isError: isError1, data: data1, error: error1 } = useGetCurrentVehicle();
-    console.log("current vehicle id",currentVehicle?currentVehicle.id:null);
-    const currentVehicleId = currentVehicle?currentVehicle.id:2;
-    
+    console.log("current vehicle id", currentVehicle ? currentVehicle.id : null);
+    const currentVehicleId = currentVehicle ? currentVehicle.id : 2;
+
+    const queryClient = useQueryClient();
+
 
     const updateWashplan = useUpdateCurrentWashplan();
     const deleteWashplan = useResetCurrentWashplan();
-    
 
-    
+
+
     const { isPending: isPending3, isError: isError3, data: data3, error: error3 } = useGetCurrentPlan(currentVehicleId!);
     const dispatch = useDispatch();
     const mutation = useUpdateCurrentWashplan()
@@ -83,37 +85,35 @@ export const WashplanPage: React.FC<Props> = () => {
         if (data1) {
             console.log("current vehicle from washplan", data1);
             setCurrentVehicle(data1);
-
-
         }
         console.log("current vehicle from washplan", data1);
         console.log("current plan from washplan before if check", data3);
 
         if (data3) {
             console.log("current plan from washplan in useeffect     ", data3);
-
             setCurrentPlan(data3);
-        }else{
+        } else {
             setCurrentPlan(null);
         }
+        
 
 
     }, [data1, data3]);
 
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'WashplanPage'>>();
-    
 
 
-    const createToast = (message:string, time:number) => {
+
+    const createToast = (message: string, time: number) => {
         let toast = Toast.show(`${message}`, {
             duration: Toast.durations.LONG,
-            
-          });
-          
-          console.log("toast", toast);
-          setTimeout(function hideToast() {
+
+        });
+
+        console.log("toast", toast);
+        setTimeout(function hideToast() {
             Toast.hide(toast);
-          }, time);
+        }, time);
 
     }
 
@@ -141,42 +141,45 @@ export const WashplanPage: React.FC<Props> = () => {
             washplan: id!
         }
         console.log("current vehicle dto", currentVehicleDto);
-       
-        console.log("before mutation applied")
-         updateWashplan.mutate({ token: token, id: currentVehicle?.id!, currentVehicle: currentVehicleDto });       
-        console.log("after mutation applied and before toast");
         
+        console.log("before mutation applied")
+        updateWashplan.mutate({ token: token, id: currentVehicle?.id!, currentVehicle: currentVehicleDto });
+        queryClient.invalidateQueries(['current_plan', 'current_vehicle']);
+        console.log("after mutation applied and before toast");
+
     }
 
-     // Add this line to import the `useResetPlan` hook
+    // Add this line to import the `useResetPlan` hook
 
-        const resetPlan = async (id: number, token: string) => {
-            const plan = data2.find((plan: WashPlan) => plan.id === id);
-            const currentVehicleDto = {
-                id: currentVehicle?.id!,
-                licencePlateNumber: currentVehicle?.licencePlateNumber!,
-                model: currentVehicle?.model!,
-                color: currentVehicle?.color!,
-                year: currentVehicle?.year!,
-                washplan: null,
-            }
+    const resetPlan = async (id: number, token: string) => {
+        const plan = data2.find((plan: WashPlan) => plan.id === id);
+        const currentVehicleDto = {
+            id: currentVehicle?.id!,
+            licencePlateNumber: currentVehicle?.licencePlateNumber!,
+            model: currentVehicle?.model!,
+            color: currentVehicle?.color!,
+            year: currentVehicle?.year!,
+            washplan: null,
+        }
 
-            createToast('Plan has been reseted.' , 2000);
-            if (currentVehicle) {
-                deleteWashplan.mutate({ token: token, id: currentVehicle?.id!, currentVehicle: currentVehicleDto });
-                vehicleAPI.resetVehicleWithPlan(token, currentVehicle?.id!, currentVehicleDto!);
-                await SecureStore.deleteItemAsync('plan');
-                //await SecureStore.setItemAsync('plan', JSON.stringify(plan));
-            }
-            else {
-                console.log("current vehicle not found");       
+        createToast('Plan has been reseted.', 2000);
+        if (currentVehicle) {
+
+            deleteWashplan.mutate({ token: token, id: currentVehicle?.id!, currentVehicle: currentVehicleDto });
+            vehicleAPI.resetVehicleWithPlan(token, currentVehicle?.id!, currentVehicleDto!);
+            queryClient.invalidateQueries(['current_plan', 'current_vehicle']);
+            await SecureStore.deleteItemAsync('plan');
+            //await SecureStore.setItemAsync('plan', JSON.stringify(plan));
+        }
+        else {
+            console.log("current vehicle not found");
 
         }
-        
+
     }
 
 
-   
+
 
 
 
@@ -194,6 +197,7 @@ export const WashplanPage: React.FC<Props> = () => {
         SecureStore.deleteItemAsync('current_plan');
         console.log("plan deleted");
         navigation.navigate('HomePage');
+
 
     }
 
