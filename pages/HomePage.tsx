@@ -49,21 +49,21 @@ const HomePage: React.FC<Props> = ( ) => {
                     Already member?
            </Text>
         <TouchableOpacity
-            style={styles.addButton}
+            style={styles.createButton}
             onPress={() => navigation.navigate('login')}>
 
-            <Text>LogIn</Text>
+            <Text style={styles.buttonText}>LogIn</Text>
         </TouchableOpacity>
                             <Text>
                     Not Member Yet ?
            </Text>
 
                             <TouchableOpacity
-                                style={styles.addButton}
+                                style={styles.createButton}
                                 
                                 onPress={() => navigation.navigate('signup')}>
 
-                                <Text>Register yourself </Text>  
+                                <Text style={styles.buttonText}>Register yourself </Text>  
                                 
                             </TouchableOpacity>
                           
@@ -134,6 +134,38 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    input: {
+        width: '100%',
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 20,
+        paddingHorizontal: 10,
+      },
+      input1: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+      },
+      createButton: {
+        display: 'flex',
+        borderRadius: 10,
+        backgroundColor: "#2c6979",
+        width: '60%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10
+      },
+      buttonText: {
+        padding: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white',
+        fontSize: 20,
+    
+      }
 
 })
