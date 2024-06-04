@@ -9,21 +9,21 @@ import {
     useQueryClient,
     QueryClient,
     QueryClientProvider,
-  } from '@tanstack/react-query'
-  import { VehicleDTO } from "../pages/Washplan";
+} from '@tanstack/react-query'
+import { VehicleDTO } from "../pages/Washplan";
 
 
-  async function save(key: string, value: string) {
+async function save(key: string, value: string) {
     await SecureStore.setItemAsync(key, value);
-  }
+}
 
-   
 
-    export const useGetCurrentVehicle = () => {
-        
+
+export const useGetCurrentVehicle = () => {
+
     return useQuery({
         queryKey: ['current_vehicle'],
-        queryFn: async function fetchVehicles () {
+        queryFn: async function fetchVehicles() {
             const token = await SecureStore.getItemAsync('token');
             const response = await vehicleAPI.getVehicles(token as string);
             console.log("response from get current vehicle from query:", response);
@@ -32,24 +32,24 @@ import {
     })
 }
 
- export const useGetCurrentPlan = (id:number) => {
+export const useGetCurrentPlan = (id: number) => {
     return useQuery({
         queryKey: ['current_plan'],
-        queryFn: async function fetchCurrentPlan () {
+        queryFn: async function fetchCurrentPlan() {
             const token = await SecureStore.getItemAsync('token');
             const currentVehicle = await SecureStore.getItemAsync('current_vehicle');
-            const response = await vehicleAPI.getCurrentPlan(token as string,id );
+            const response = await vehicleAPI.getCurrentPlan(token as string, id);
 
             console.log("response from get current plan from query:", response);
-            if(response){
-                
+            if (response) {
+
                 return response;
 
             }
-            else{
+            else {
                 return null;
             }
-            
+
         },
     })
 }
@@ -57,43 +57,44 @@ import {
 
 export const useUpdateCurrentWashplan = () => {
     const queryClient = useQueryClient()
-    
-   
-return useMutation({
-    mutationFn:  async (variables: { token: string, id: number, currentVehicle: VehicleDTO }) => {
-        const { token, id, currentVehicle } = variables;
-        const response = await vehicleAPI.updateVehicleWithPlan(token, id, currentVehicle);
-        console.log("response from update current plan from query:", response);
-        return response;
-    },
-    onSuccess: () => {
-       console.log("on success from update current plan from query");
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['current_plan','current_vehicle'] })
-    },
-    
-  })
+
+
+    return useMutation({
+        mutationFn: async (variables: { token: string, id: number, currentVehicle: VehicleDTO }) => {
+            const { token, id, currentVehicle } = variables;
+            const response = await vehicleAPI.updateVehicleWithPlan(token, id, currentVehicle);
+            await SecureStore.deleteItemAsync("current_plan");
+            console.log("response from update current plan from query:", response);
+            return response;
+        },
+        onSuccess: () => {
+            console.log("on success from update current plan from query");
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: ['current_plan', 'current_vehicle'] })
+        },
+
+    })
 
 }
 
 export const useResetCurrentWashplan = () => {
-    const queryClient = useQueryClient()  
+    const queryClient = useQueryClient()
 
-return useMutation({    
-    mutationFn:  async (variables: { token: string, id: number, currentVehicle: VehicleDTO }) => {
-        const { token, id, currentVehicle } = variables;
-        const response = await vehicleAPI.resetVehicleWithPlan(token, id, currentVehicle);
-        
-        console.log("response from reset current plan from query:", response);
-        return response;
-    },
-    onSuccess: () => {
-       console.log("on success from reset current plan from query");
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['current_plan','current_vehicle'] })
-    },
-    
-  })
+    return useMutation({
+        mutationFn: async (variables: { token: string, id: number, currentVehicle: VehicleDTO }) => {
+            const { token, id, currentVehicle } = variables;
+            const response = await vehicleAPI.resetVehicleWithPlan(token, id, currentVehicle);
+
+            console.log("response from reset current plan from query:", response);
+            return response;
+        },
+        onSuccess: () => {
+            console.log("on success from reset current plan from query");
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: ['current_plan', 'current_vehicle'] })
+        },
+
+    })
 
 }
 

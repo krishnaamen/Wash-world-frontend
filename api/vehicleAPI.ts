@@ -12,6 +12,9 @@ export class vehicleAPI {
     static baseUrl1 = BASE_URL + "/washplan";
 
     static async createVehicle(vehicle: CreateVehicleDto, jwt: string) {
+        console.log("vehicle add car api", vehicle);
+        console.log("jwt in add car api", jwt)
+        console.log("baseurl", this.baseUrl);
 
         try {
 

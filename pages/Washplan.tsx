@@ -96,7 +96,7 @@ export const WashplanPage: React.FC<Props> = () => {
         } else {
             setCurrentPlan(null);
         }
-        
+
         async function readVehicleFromSecureStore() {
             const vehicle = await SecureStore.getItemAsync('current_vehicle');
             vehicle && setCurrentVehicle(JSON.parse(vehicle));
@@ -105,7 +105,7 @@ export const WashplanPage: React.FC<Props> = () => {
 
         async function readCurrentPlanFromSecureStore() {
             const currentPlan = await SecureStore.getItemAsync('current_plan');
-                currentPlan && setCurrentPlan(JSON.parse(currentPlan));
+            currentPlan && setCurrentPlan(JSON.parse(currentPlan));
         }
         readCurrentPlanFromSecureStore();
 
@@ -142,11 +142,13 @@ export const WashplanPage: React.FC<Props> = () => {
         await SecureStore.deleteItemAsync('current_user');
         await SecureStore.deleteItemAsync('current_vehicle');
         console.log("token deleted");
+
     }
 
     const handlePlan = (id: number, token: string) => {
         const plan = data2.find((plan: any) => plan.id === id);
         console.log("plan from handle plan", plan);
+        setCurrentPlan(plan);
         const currentVehicleDto = {
             id: currentVehicle?.id!,
             licencePlateNumber: currentVehicle?.licencePlateNumber!,
@@ -156,17 +158,20 @@ export const WashplanPage: React.FC<Props> = () => {
             washplan: id!
         }
         console.log("current vehicle dto", currentVehicleDto);
-        
+
         console.log("before mutation applied")
         updateWashplan.mutate({ token: token, id: currentVehicle?.id!, currentVehicle: currentVehicleDto });
         queryClient.invalidateQueries(['current_plan', 'current_vehicle']);
         console.log("after mutation applied and before toast");
+        createToast('Plan has been Changed.', 2000);
+
 
     }
 
     // Add this line to import the `useResetPlan` hook
 
     const resetPlan = async (id: number, token: string) => {
+        setCurrentPlan(null);
         const plan = data2.find((plan: WashPlan) => plan.id === id);
         const currentVehicleDto = {
             id: currentVehicle?.id!,
@@ -182,8 +187,8 @@ export const WashplanPage: React.FC<Props> = () => {
 
             deleteWashplan.mutate({ token: token, id: currentVehicle?.id!, currentVehicle: currentVehicleDto });
             vehicleAPI.resetVehicleWithPlan(token, currentVehicle?.id!, currentVehicleDto!);
-            queryClient.invalidateQueries(['current_plan', 'current_vehicle']);
             await SecureStore.deleteItemAsync('plan');
+            queryClient.invalidateQueries(['current_plan', 'current_vehicle']);
             //await SecureStore.setItemAsync('plan', JSON.stringify(plan));
         }
         else {
@@ -192,14 +197,6 @@ export const WashplanPage: React.FC<Props> = () => {
         }
 
     }
-
-
-
-
-
-
-
-
 
 
 
