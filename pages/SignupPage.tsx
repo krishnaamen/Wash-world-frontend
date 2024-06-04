@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { RootStackParamList} from '../components/MyNewComponent';
+import { RootStackParamList } from '../components/MyNewComponent';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store/store';
 import { signup } from '../store/userSlice';
@@ -22,28 +22,28 @@ const SignupScreen = () => {
     const [lastName, setLastName] = useState('');
     const [username, setUsername] = useState('');
     const [dob, setDob] = useState(new Date());
-  
+
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
 
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
 
-  const handleConfirm = (date:any) => {
-    console.log("A date has been picked: ", date);
-    setDob(date);
-    hideDatePicker();
-  };
-const dispatch = useDispatch<AppDispatch>();
+    const handleConfirm = (date: any) => {
+        console.log("A date has been picked: ", date);
+        setDob(date);
+        hideDatePicker();
+    };
+    const dispatch = useDispatch<AppDispatch>();
 
     const handleSignup = () => {
-      // Perform signup logic here
-      dispatch(signup({ firstName, lastName, email, username, password, dob }));
-      // console.log('Signing up with username:', username, 'and password:', password);
+        // Perform signup logic here
+        dispatch(signup({ firstName, lastName, email, username, password, dob }));
+        // console.log('Signing up with username:', username, 'and password:', password);
     };
 
     return (
@@ -80,19 +80,19 @@ const dispatch = useDispatch<AppDispatch>();
                 onChangeText={setPassword}
                 value={password}
             />
-          
-      <Button title="Choose your Date of birth" onPress={showDatePicker} />
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirm}
-        onCancel={hideDatePicker}
-      />
-      
+
+            <Button title="Choose your Date of birth" onPress={showDatePicker} />
+            <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+            />
 
 
-<View style={styles.button}>
-            <Button title="Sign Up" onPress={handleSignup} />
+
+            <View style={styles.button}>
+                <Button title="Sign Up" onPress={handleSignup} />
             </View>
             <Text style={styles.loginText} onPress={() => navigation.navigate("login")}>Go to Login</Text>
         </View>

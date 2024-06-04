@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "financeManagerFrontend",
-    "slug": "financeManagerFrontend",
+    "name": "washworld",
+    "slug": "washworld",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,14 +16,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.financeManagerFrontend"
+      "bundleIdentifier": "com.anonymous.washworld"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.financeManagerFrontend"
+      "package": "com.anonymous.washworld"
     },
     "web": {
       "favicon": "./assets/favicon.png"
