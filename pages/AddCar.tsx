@@ -1,14 +1,14 @@
 import { vehicleAPI } from '../api/vehicleAPI';
 import SecureStorage from 'expo-secure-store';
 import { useSelector } from 'react-redux';
-import { CreateVehicleDto } from '../entities/CreateVehicleDTO';
+import { CreateVehicleDto } from '../entities/CreateVehicleDto';
 import { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const AddCar: React.FC = () => {
     const [model, setModel] = useState('');
     const [color, setColor] = useState('');
     const [licencePlateNumber, setLicencePlateNumber] = useState('');
-    const [year, setYear] = useState();
     const [year, setYear] = useState('');
     const jwt = useSelector((state: any) => state.auth.token);
     console.log("jwt from add car", jwt);
