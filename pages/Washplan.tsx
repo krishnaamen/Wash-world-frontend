@@ -19,6 +19,7 @@ import { useGetWashplanList } from '../query/washplan.hooks';
 import { RootState } from '../store/store';
 import Toast from 'react-native-root-toast';
 import { Mutation, useQueryClient } from '@tanstack/react-query';
+import PaymentMethod from './PaymentMethod';
 
 
 const getcurrentvehicle = async () => {
@@ -200,6 +201,12 @@ export const WashplanPage: React.FC<Props> = () => {
 
 
 
+    const handlePaymentMethod = () => {
+        navigation.navigate('addpayment');
+    };
+
+
+
 
     const changePlan = async (currentPlan: WashPlan) => {
         createToast('Plan changed successfully', 2000);
@@ -228,7 +235,7 @@ export const WashplanPage: React.FC<Props> = () => {
                                 <TouchableOpacity
                                     style={styles.addButton}
                                     onPress={() => handlePlan(item.id, token as string)}>
-                                    <PlanItem title={item.washplanName} price={item.washPlanPrice} currency={"DKK"} offers={["shamphoo", "polinig", "dry"]} />
+                                    <PlanItem title={item.washplanName} price={item.washplanPrice} currency={"DKK"} offers={["shamphoo", "polinig", "dry"]} />
                                 </TouchableOpacity>
                             )}
                         />
@@ -264,6 +271,14 @@ export const WashplanPage: React.FC<Props> = () => {
                 <>
                     <Text style={styles.title}>Current Plan is</Text>
                     <PlanItem title={currentPlan.washplanName} price={currentPlan.washplanPrice} currency='DKK/M' offers={['shampoo', 'light dry', 'light brush']} />
+                  
+
+                    <TouchableOpacity
+                        style={styles.addButton1}
+                        onPress={handlePaymentMethod}
+                    >
+                        <Text style={styles.changeplan}>Add Payment Method</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.addButton1}
                         onPress={() => {
@@ -271,7 +286,7 @@ export const WashplanPage: React.FC<Props> = () => {
 
                         }}>
 
-                        <Text style={styles.title}>Change Plan</Text>
+                        <Text style={styles.changeplan}>Change Plan</Text>
                     </TouchableOpacity>
                 </>
             ) : planhandler()}
@@ -356,6 +371,12 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginLeft: 30,
+    },
+    changeplan: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: 'blue',
     }
 
 })

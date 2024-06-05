@@ -13,6 +13,7 @@ import AddCar from '../pages/AddCar';
 import WashplanPage from '../pages/Washplan';
 import { useEffect } from 'react';
 import { setToken } from '../store/authSlice';
+import PaymentMethod from '../pages/PaymentMethod';
 
 import {
   useQuery,
@@ -31,6 +32,7 @@ export type RootStackParamList = {
   AuthLogin: undefined;
   HomePage: undefined;
   AddCar: undefined;
+  PaymentMethod: undefined;
 };
 
 import * as SecureStore from 'expo-secure-store';
@@ -96,6 +98,9 @@ const MyNewComponent =   () => {
           else if (route.name === 'addcar') {
             iconName = focused ? 'add-circle' : 'add-circle-outline';
           }
+          else if (route.name === 'addpayment') {
+            iconName = focused ? 'card' : 'card-outline';
+          }
           else {
             iconName = 'alert'; // Default icon, make sure this is valid
           }
@@ -112,6 +117,8 @@ const MyNewComponent =   () => {
           
           <Tab.Screen name="washplan" component={WashplanPage} />
           <Tab.Screen name="addcar" component={AddCar} />
+          <Tab.Screen name="addpayment" component={PaymentMethod} />
+
         </>
       ) : (
         <>
