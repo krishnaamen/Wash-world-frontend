@@ -11,4 +11,4 @@ export const useGetCurrentUser = () => {
       },
     })
   }
-  
+  // secure store is the device storage for storing sensitive data

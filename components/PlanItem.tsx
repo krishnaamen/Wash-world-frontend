@@ -7,7 +7,7 @@ interface PlanItemProps {
     currency: string;
     offers: string[];
 }
-
+// props like parameter of any functions
 const PlanItem: React.FC<PlanItemProps> = ({ title, price, currency, offers }) => {
     return (
         <View style={styles.container}>

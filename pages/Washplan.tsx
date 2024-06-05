@@ -22,10 +22,7 @@ import { Mutation, useQueryClient } from '@tanstack/react-query';
 import PaymentMethod from './PaymentMethod';
 
 
-const getcurrentvehicle = async () => {
-    return await SecureStore.getItemAsync('current_vehicle');
 
-}
 
 export type WashPlan = {
     id: number,
@@ -55,14 +52,13 @@ type RootStackParamList = {
 
 
 
-const Stack = createNativeStackNavigator();
+
 type Props = {}
 
 
 export const WashplanPage: React.FC<Props> = () => {
     const [currentPlan, setCurrentPlan] = useState<WashPlan | any>();
     const [currentVehicle, setCurrentVehicle] = useState<VehicleDTO | any>();
-    const username = SecureStore.getItemAsync('current_user');
     const { isPending, isError, data, error } = useGetCurrentUser();
     const token = useSelector((state: RootState) => state.auth.token);
     const { isPending: isPending2, isError: isError2, data: data2, error: error2 } = useGetWashplanList();
@@ -159,7 +155,7 @@ export const WashplanPage: React.FC<Props> = () => {
             washplan: id!
         }
         console.log("current vehicle dto", currentVehicleDto);
-
+        // here we are changing the washplan through react query
         console.log("before mutation applied")
         updateWashplan.mutate({ token: token, id: currentVehicle?.id!, currentVehicle: currentVehicleDto });
         queryClient.invalidateQueries(['current_plan', 'current_vehicle']);
@@ -206,20 +202,7 @@ export const WashplanPage: React.FC<Props> = () => {
     };
 
 
-
-
-    const changePlan = async (currentPlan: WashPlan) => {
-        createToast('Plan changed successfully', 2000);
-        const id = currentPlan.id;
-        SecureStore.deleteItemAsync('plan');
-        setCurrentPlan(null);
-        SecureStore.deleteItemAsync('current_plan');
-        console.log("plan deleted");
-        navigation.navigate('HomePage');
-
-
-    }
-
+// plan handler shows all the plans basic, gold and premium 
     const planhandler = () => {
         return (
             <View style={styles.container}>

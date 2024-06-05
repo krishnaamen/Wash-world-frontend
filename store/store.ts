@@ -15,3 +15,6 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch
+
+// redux toolkit and react query is used for managing state in the application
+// while hooks are used in the components to access the state

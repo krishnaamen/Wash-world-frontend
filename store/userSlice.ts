@@ -29,7 +29,7 @@ const initialState: UserState = {
     loading: false,
     error: null,
 };
-
+// to call the login api from frontend to backend
 export const login = createAsyncThunk(
     'user/login',
     async (credentials: { email: string; password: string }, thunkAPI) => {
@@ -45,7 +45,7 @@ export const login = createAsyncThunk(
         // }
     }
 );
-
+// to call the signup api from frontend to backend
 export const signup = createAsyncThunk(
     'user/signup',
     async (userData: { firstName:string, lastName:string,email: string, password: string,dob:Date }, thunkAPI) => {
@@ -66,14 +66,16 @@ export const signup = createAsyncThunk(
 
 
 
-const userSlice = createSlice({
+const userSlice: any = createSlice({
     name: 'user',
     initialState,
+    // reducers are synchronous actions inside,
     reducers: {
         logout(state) {
             state.token = '';
           },
     },
+    // extra reducer to handle async thunk call from frontend to backend
     extraReducers: (builder) => {
         builder
             .addCase(login.pending, (state) => {

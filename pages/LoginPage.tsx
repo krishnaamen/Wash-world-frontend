@@ -14,27 +14,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { vehicleAPI } from '../api/vehicleAPI';
 
-export const storeData = async (key: string, value: string) => {
-  try {
-    await AsyncStorage.setItem(key, value);
-  } catch (e) {
-    // saving error
-  }
-};
 
 async function save(key: string, value: string) {
   await SecureStore.setItemAsync(key, value);
 }
 
-
-//   type DetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'EntryList'>;
-
-// type Props = {
-//     navigation: DetailsScreenNavigationProp;
-// };
-
-
-const Stack = createNativeStackNavigator();
 type Props = {}
 
 const LoginPage: React.FC<Props> = () => {
@@ -47,14 +31,9 @@ const LoginPage: React.FC<Props> = () => {
   const dispatch = useDispatch<AppDispatch>();
 
 
-
-  const token = useSelector((state: RootState) => state.users.token);
-
   const handleLogin = async () => {
     const jwt = await SecureStore.getItemAsync('token') as string;
-    //Nk.Leader@2024
-
-
+    
     try {
 
       console.log("email and password ", email, password);

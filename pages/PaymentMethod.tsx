@@ -19,7 +19,7 @@ const PaymentMethod: React.FC = () => {
     };
 
     const handleSubmit = () => {
-        // Add your logic to handle form submission here
+        //we will use this function to submit the form for now we are just showing the alert
         Alert.alert('Form Submitted', `Card Number: ${cardNumber}, Expiry Date: ${expiryDate}, CVV: ${cvv}`);
     };
 

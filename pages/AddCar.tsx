@@ -13,14 +13,11 @@ const AddCar: React.FC = () => {
     const jwt = useSelector((state: any) => state.auth.token);
     console.log("jwt from add car", jwt);
 
-
+    // all the data in the textinput is stored in the variable of usestate 
+    //and then we are passing that data to the function handleAddCar
     const handleAddCar = () => {
         const vehicle = { licencePlateNumber, model, color, year } as unknown as CreateVehicleDto;
-
-        vehicleAPI.createVehicle(new CreateVehicleDto(model, color, licencePlateNumber, year), jwt);
-        vehicleAPI.createVehicle(vehicle, jwt);
-        // Logic to add the car
-        // You can access the values of model, color, numberPlate, and year here
+        vehicleAPI.createVehicle(vehicle, jwt);      
         console.log(model, color, licencePlateNumber, year);
     };
     return (

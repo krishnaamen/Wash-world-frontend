@@ -15,18 +15,11 @@ type RootStackParamList = {
     SignupPage: undefined;
 };
 
-//type DetailsScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Home'>;
 
-// type Props = {
-//     navigation: DetailsScreenNavigationProp;
-// };
-
-const Stack = createNativeStackNavigator();
 type Props = {}
 
 const HomePage: React.FC<Props> = ( ) => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'HomePage'>>();
-    const token = SecureStore.getItemAsync('token');
 
 
     return (
@@ -57,10 +50,10 @@ const HomePage: React.FC<Props> = ( ) => {
                             <Text>
                     Not Member Yet ?
            </Text>
-
+{/* we are using TouchableOpacity instead of button because its easy to customize such as using own style.*/}
                             <TouchableOpacity
                                 style={styles.createButton}
-                                
+                               
                                 onPress={() => navigation.navigate('signup')}>
 
                                 <Text style={styles.buttonText}>Register yourself </Text>  
@@ -69,7 +62,8 @@ const HomePage: React.FC<Props> = ( ) => {
                           
            </View>
            
-           
+            {/* navigation is declared in mynewcomponent 
+                */}
 
 
         </View>

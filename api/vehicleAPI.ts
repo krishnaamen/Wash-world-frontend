@@ -11,6 +11,8 @@ export class vehicleAPI {
     static baseUrl = BASE_URL + "/vehicle";
     static baseUrl1 = BASE_URL + "/washplan";
 
+// function to add vehicle
+
     static async createVehicle(vehicle: CreateVehicleDto, jwt: string) {
         console.log("vehicle add car api", vehicle);
         console.log("jwt in add car api", jwt)
@@ -61,7 +63,7 @@ export class vehicleAPI {
         }
 
     }
-
+// It updates the washplan in backend(database)
 
     static async updateVehicleWithPlan(jwt: string, id: number, createVehicleDto: CreateVehicleDto) {
         try {
@@ -85,7 +87,7 @@ export class vehicleAPI {
 
 
 
-
+// resets the plan and brings the page in the options of plan such as basic, gold and premium
 
     static async resetVehicleWithPlan(jwt: string, id: number, createVehicleDto: CreateVehicleDto) {
         try {
@@ -110,7 +112,7 @@ export class vehicleAPI {
 
 
 
-
+// fetches the current plan of the vehicle
     static async getCurrentPlan(jwt: string, id: number) {
         try {
             const response = await axios.get(this.baseUrl + `/${id}`, {
@@ -132,6 +134,8 @@ export class vehicleAPI {
 
     }
 
+
+    // this will fetch the plans from database 
     static async getPlans(jwt: string) {
         try {
             const response = await axios.get(this.baseUrl1, {

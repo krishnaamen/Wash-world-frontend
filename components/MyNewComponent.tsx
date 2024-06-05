@@ -55,7 +55,7 @@ const MyNewComponent =   () => {
 }, [])
  
   const dispatch = useDispatch<AppDispatch>();
-
+// getting token from redux store
   const token = useSelector((state: RootState) => state.auth.token);
   //const token = getValueFor('token');
 
@@ -74,7 +74,8 @@ const MyNewComponent =   () => {
 
     );
   }
-
+// component based feature can only be accessed in the component so react toolkit features 
+//and reactquery features can only be accessed in the component
   return (
 <QueryClientProvider client={queryClient}>
     <Tab.Navigator
